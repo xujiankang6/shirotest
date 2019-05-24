@@ -59,9 +59,7 @@ public class UserController {
      */
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     public String login(@Param("phone") String phone, @Param("upwd") String upwd) {
-        System.out.println("qiantai:"+new Sha384Hash(String.valueOf(111)).toBase64()+"111111111111111111111111111");
-
-
+        
         return "login";
 
     }

@@ -13,11 +13,8 @@ public class MyMatcher extends SimpleCredentialsMatcher {
     @Override
     public boolean doCredentialsMatch(AuthenticationToken token, AuthenticationInfo info) {
         UsernamePasswordToken usernamePasswordToken = (UsernamePasswordToken) token;
-        System.out.println(String.valueOf(usernamePasswordToken.getPassword())+"=====================");
         String pwd = encrypt(String.valueOf(usernamePasswordToken.getPassword()));
-        System.out.println(pwd+"--------------------------------");
         String mysqlpwd = (String) info.getCredentials();
-        System.out.println(mysqlpwd+"--------------------------------mysql");
         return this.equals(pwd, mysqlpwd);
     }
 
