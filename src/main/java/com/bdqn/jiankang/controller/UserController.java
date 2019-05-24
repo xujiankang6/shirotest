@@ -14,6 +14,7 @@ import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.crypto.hash.Sha384Hash;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,6 +59,8 @@ public class UserController {
      */
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     public String login(@Param("phone") String phone, @Param("upwd") String upwd) {
+        System.out.println("qiantai:"+new Sha384Hash(String.valueOf(111)).toBase64()+"111111111111111111111111111");
+
 
         return "login";
 
@@ -214,7 +217,7 @@ public class UserController {
     @RequestMapping("/saveregister")
     public ModelAndView saveregister(String phone, String password) {
         ModelAndView m = new ModelAndView();
-        int i = sd.addUser(phone, password);
+        int i = sd.addUser(phone, new Sha384Hash(String.valueOf(password)).toBase64());
         //拿到新增的uid
         int uid = sd.getUidbyphone(phone);
         //为新用户添加一条默认的userinfo
