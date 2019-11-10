@@ -1,4 +1,4 @@
-package com.bdqn.jiankang.config;
+package com.jiankang.config;
 
 import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
 

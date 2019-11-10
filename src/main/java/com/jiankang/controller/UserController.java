@@ -1,13 +1,12 @@
-package com.bdqn.jiankang.controller;
+package com.jiankang.controller;
 
 
-import com.bdqn.jiankang.bean.*;
-import com.bdqn.jiankang.service.AdminService;
-import com.bdqn.jiankang.service.CourseService;
-import com.bdqn.jiankang.service.UserService;
-import com.bdqn.jiankang.util.Layui;
-import com.bdqn.jiankang.util.SmsService;
-import io.swagger.models.auth.In;
+import com.jiankang.bean.*;
+import com.jiankang.service.AdminService;
+import com.jiankang.service.CourseService;
+import com.jiankang.service.UserService;
+import com.jiankang.util.Layui;
+import com.jiankang.util.SmsService;
 import org.apache.ibatis.annotations.Param;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.IncorrectCredentialsException;
@@ -59,9 +58,7 @@ public class UserController {
      */
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     public String login(@Param("phone") String phone, @Param("upwd") String upwd) {
-        
         return "login";
-
     }
 
     /**
@@ -77,11 +74,8 @@ public class UserController {
         //添加用户认证信息
         Subject subject = SecurityUtils.getSubject();
         UsernamePasswordToken uToken = new UsernamePasswordToken(phone, upwd);
-
-
-
-            uToken.setRememberMe(true);
-
+        //实现记住我
+        uToken.setRememberMe(true);
         try {
             //进行验证，报错返回首页，不报错到达成功页面。
             subject.login(uToken);

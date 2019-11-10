@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jiankang.mapper.CourseDao">
+    <cache></cache>
+    <!--课程章节和课节的自定义map-->
+    <resultMap id="coursechaptercontent" type="CourseChapter">
+        <result property="courseid" column="courseid"></result>
+        <result property="chapterid" column="chapterid"></result>
+        <result property="chaptername" column="chaptername"></result>
+        <collection property="courseContents" ofType="CourseContent">
+            <result column="chapterid" property="chapterid"></result>
+            <result column="contentid" property="contentid"></result>
+            <result column="contentname" property="contentname"></result>
+            <result column="contenturl" property="contenturl"></result>
+            <result column="contenttime" property="contenttime"></result>
+        </collection>
+    </resultMap>
+
+    <!-- /**
+     * 查询所有的课程类别
+     * @return
+     */-->
+    <select id="getCategorylist" resultType="CategoryCourse">
+        select * from categorycourse
+    </select>
+
+    <!--/**
+     * 查询所有的难度等级
+     * @return
+     */
+    public List<CourseDifferent> getCourseDifferent();-->
+    <select id="getCourseDifferent" resultType="CourseDifferent">
+        select * from course_different
+    </select>
+    <!--/**
+     * 查询所有的审核情况
+     */
+    public List<Coursestatus> getCoursestatus();-->
+    <select id="getCoursestatus" resultType="Coursestatus">
+        select * from coursestatus
+    </select>
+
+
+    <!-- /**
+     * 根据类别id查询对应的名称
+     */
+    public String getcategoryname(@Param("categoryid") int categoryid);-->
+    <select id="getcategoryname" resultType="String">
+        select categoryname from categorycourse where categoryid=#{categoryid}
+    </select>
+
+    <!--  /**
+     * 根据难度id查询对应的名称
+     */
+    public String getcatedifferentname(@Param("differentid") int differentid);-->
+    <select id="getcatedifferentname" resultType="String">
+        select differentname from course_different where  differentid=#{differentid};
+    </select>
+
+    <!--    /**
+     * 添加课程详情
+     */
+    public int addcoursedescribe(@Param("uid") int uid,@Param("coursename") String coursename,
+                                 @Param("coursestatusid") int coursestatusid,
+                                 @Param("simpledescribe") String simpledescribe,@Param("categoryid") int categoryid,
+                                 @Param("price") double price,@Param("createtime") String createtime,
+                                 @Param("differentid") int differentid);-->
+    <insert id="addcoursedescribe">
+        INSERT into course(uid,coursename,coursestatusid,simpledescribe,categoryid,price,createtime,differentid,imgpath)
+values(#{uid},#{coursename},#{coursestatusid},#{simpledescribe},#{categoryid},#{price},#{createtime},#{differentid},#{imgpath})
+    </insert>
+
+    <!-- /**
+     * 根据userid拿到新增的course
+     */
+    public Course getCourse(@Param("userid") int userid);-->
+    <select id="getCourse" resultType="Course">
+        SELECT * from course where uid=#{userid} ORDER BY createtime DESC LIMIT 1
+    </select>
+
+    <!--    /**
+     * 根据courseid添加coursename
+     */
+    public int addCourseChapter(@Param("CourseChapter") CourseChapter courseChapter);-->
+    <insert id="addCourseChapter" parameterType="CourseChapter">
+        insert into course_chapter(chapterid,courseid,chaptername)
+        VALUES(#{CourseChapter.chapterid},#{CourseChapter.courseid},#{CourseChapter.chaptername})
+    </insert>
+
+    <!--    /**
+     * 根据courseid拿到chapter集合
+     */
+    public List<CourseChapter> getCourseChapter(@Param("courseid") int courseid);-->
+    <select id="getCourseChapter" resultMap="coursechaptercontent">
+
+SELECT * from course_chapter cc,course_content c WHERE cc.chapterid=c.chapterid and cc.courseid=c.courseid
+ AND cc.courseid=#{courseid}  ORDER BY cc.chapterid ASC, contenttime ASC
+
+    </select>
+
+
+    <!--/**
+     * 根据课程号拿到所有的章节信息
+     */
+    public List<CourseChapter> getChaptername(@Param("courseid") int courseid);-->
+    <select id="getChaptername" resultType="CourseChapter">
+        select chapterid,chaptername from course_chapter where courseid=#{courseid}
+    </select>
+
+    <!--/**
+     * 保存课节信息
+     */
+    public int savecoursecontent(@Param("CourseContent")CourseContent courseContent);-->
+    <insert id="savecoursecontent" parameterType="CourseContent">
+    insert into course_content(courseid,chapterid,contentname,contenturl,contenttime)
+VALUES (#{CourseContent.courseid},#{CourseContent.chapterid},#{CourseContent.contentname},
+#{CourseContent.contenturl},#{CourseContent.contenttime})
+</insert>
+
+    <!-- /**
+     * 教员根据条件查询课程
+     */
+    public List<Course> querySelectCourse(@Param("coursename") String coursename,
+                                          @Param("coursestatusid") int coursestatusid,
+                                          @Param("categoryid") int categoryid,
+                                          @Param("differentid") int differentid,
+                                          @Param("starttime") String starttime,
+                                          @Param("endtime") String endtime,
+                                          @Param("limit") int limit,
+                                          @Param("page") int page,
+                                          @Param("uid") int uid);-->
+
+    <select id="querySelectCourse" resultType="Course" >
+        select c.*,differentname,categoryname,cs.statusname from
+        course c,coursestatus cs,course_different cd,categorycourse cg
+        <where>
+            <if test="coursename!=null and coursename!=''">
+                and c.coursename like '%${coursename}%'
+            </if>
+            <if test="categoryid!=0">
+                and c.categoryid=#{categoryid}
+            </if>
+            <if test="differentid!=0">
+                and c.differentid=#{differentid}
+            </if>
+            <if test="coursestatusid!=0">
+                and c.coursestatusid =#{coursestatusid}
+            </if>
+            <if test="endtime != null and endtime!=''">
+
+                and c.createtime <![CDATA[ <=]]> #{endtime}
+            </if>
+            <if test="starttime != null and starttime!=''">
+                and c.createtime >= #{starttime}
+            </if>
+            and c.differentid=cd.differentid
+            and c.coursestatusid=cs.coursestatusid
+            and c.categoryid=cg.categoryid
+            and c.uid=#{uid}
+        </where>
+
+        ORDER BY createtime DESC
+        limit #{page},#{limit}
+
+    </select>
+
+    <!--/**
+     * 教员根据条件查询课程数量
+     */
+    public int queryCourseCount(@Param("coursename") String coursename,
+                                          @Param("coursestatusid") int coursestatusid,
+                                          @Param("categoryid") int categoryid,
+                                          @Param("differentid") int differentid,
+                                          @Param("starttime") String starttime,
+                                          @Param("endtime") String endtime,
+                                          @Param("uid") int uid);-->
+    <select id="queryCourseCount" resultType="Integer">
+        select count(1) from course
+        <where>
+            <if test="coursename!=null and coursename!=''">
+                and coursename like '%${coursename}%'
+            </if>
+            <if test="categoryid!=0">
+                and categoryid=#{categoryid}
+            </if>
+            <if test="differentid!=0">
+                and differentid=#{differentid}
+            </if>
+            <if test="coursestatusid!=0">
+                and coursestatusid =#{coursestatusid}
+            </if>
+            <if test="endtime != null and endtime!=''">
+                and createtime <![CDATA[ <=]]> #{endtime}
+            </if>
+            <if test="starttime != null and starttime!=''">
+                and createtime >= #{starttime}
+            </if>
+            and uid=#{uid}
+        </where>
+    </select>
+
+    <!--  /**
+     * 根据courseid删除course详情
+     */
+    public int delCoursedescribe(@Param("courseid") int courseid);-->
+    <delete id="delCoursedescribe">
+        delete from course WHERE courseid=#{courseid}
+    </delete>
+
+    <!--/**
+     * 查看课程是否已经有课节
+     */
+    public int ishavecontent(@Param("courseid") int courseid);-->
+    <select id="ishavecontent" resultType="Integer">
+        SELECT count(1) from course_content WHERE courseid=#{courseid}
+    </select>
+
+    <!--  /**
+     * 根据courseid拿到课程详情
+     */
+    public  Course getCoursebycourseid(@Param("courseid") int courseid);-->
+    <select id="getCoursebycourseid" resultType="Course">
+        select * from course where courseid=#{courseid}
+    </select>
+    <!--/**
+     * 根据courseid删除章节信息
+     */
+    public int delchapter(@Param("courseid") int courseid);-->
+    <delete id="delchapter" >
+         DELETE from course_chapter where courseid=#{courseid}
+    </delete>
+    <!--/**
+     * 拿到课节信息
+     */
+    public List<CourseContent> querycoursecontentlist(@Param("courseid") int courseid);-->
+    <select id="querycoursecontentlist" resultType="CourseContent">
+        select * from course_content  WHERE courseid=#{courseid}
+    </select>
+
+    <!--    /**
+     * 根据courseid删除课节信息
+     */
+    public int delcoursecontent(@Param("courseid") int courseid);-->
+    <delete id="delcoursecontent" >
+         DELETE from course_content where courseid=#{courseid}
+    </delete>
+
+
+
+
+<!--    /**
+     * 教员根据id查询的课程课节
+     * @return
+     */
+    public List<CourseContent> querySelectCourseContent(
+                                          @Param("limit") int limit,
+                                          @Param("page") int page,
+                                          @Param("courseid") int courseid);-->
+
+    <select id="querySelectCourseContent" resultType="CourseContent" useCache="true">
+        SELECT * from course_chapter cc,course_content c WHERE cc.chapterid=c.chapterid and cc.courseid=c.courseid
+ AND cc.courseid=#{courseid}  ORDER BY cc.chapterid ASC, contenttime ASC
+        limit #{page},#{limit}
+
+    </select>
+
+<!--
+    /**
+     * 教员根据条件查询课程课节数量
+     * @return
+     */
+    public int queryCourseContentCount(@Param("courseid") int courseid);-->
+    <select id="queryCourseContentCount" resultType="Integer">
+        select count(1) from course_content
+            where courseid=#{courseid}
+    </select>
+
+    <!-- /**
+     * 根据contentid查询课节信息
+     */
+    public CourseContent getcontentbycontentid(@Param("contentid") int contentid);-->
+    <select id="getcontentbycontentid" resultType="CourseContent">
+        select * from course_content WHERE contentid=#{contentid}
+    </select>
+
+    <!--/**
+     * 根据课节id删除课节
+     */
+    public int delcoursecontentbyone(@Param("contentid") int contentid);-->
+    <delete id="delcoursecontentbyone" >
+         DELETE from course_content where contentid=#{contentid}
+    </delete>
+
+     <!-- /**
+     * 更新课节信息
+     */
+    public int updateCoursecontent(@Param("chapterid") int chapterid,@Param("contentname") String contentname,
+                                   @Param("contenturl") String contenturl, @Param("contentid")int contentid);-->
+    <update id="updateCoursecontent">
+        UPDATE course_content SET chapterid=#{chapterid},contentname=#{contentname},
+        contenturl=#{contenturl} where contentid=#{contentid}
+    </update>
+
+
+    <!--/**
+     * 拿到该课程最大的章节id,为了获得新增需要的的id
+     */
+    public int getmaxchapterid(@Param("courseid") int courseid);-->
+    <select id="getmaxchapterid" resultType="Integer">
+         select chapterid FROM course_chapter where courseid=#{courseid} ORDER BY chapterid DESC LIMIT 1
+    </select>
+
+
+    <!--/**
+     * 更新课程状态
+     */
+    public int updatecoursestatus(@Param("courseid") int courseid,@Param("courseid") int coursestatusid);-->
+    <update id="updatecoursestatus" >
+        update course set coursestatusid=#{coursestatusid} where courseid=#{courseid}
+    </update>
+
+
+    <!--/**
+     * 根据用户名拿到course集合
+     */
+    public List<Course> getCoursebyuid(@Param("uid") int uid);-->
+    <select id="getCoursebyuid" resultType="Course">
+        select * from course where uid=#{uid} order by createtime desc
+    </select>
+
+
+
+</mapper>

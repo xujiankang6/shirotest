@@ -1,4 +1,4 @@
-package com.bdqn.jiankang.config;
+package com.jiankang.config;
 
 
 import at.pollux.thymeleaf.shiro.dialect.ShiroDialect;
@@ -6,7 +6,6 @@ import org.apache.shiro.authc.credential.CredentialsMatcher;
 import org.apache.shiro.cache.CacheManager;
 import org.apache.shiro.cache.MemoryConstrainedCacheManager;
 import org.apache.shiro.mgt.SecurityManager;
-import org.apache.shiro.realm.Realm;
 import org.apache.shiro.session.mgt.SessionManager;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
@@ -20,7 +19,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import javax.servlet.Filter;
-import java.util.Base64;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -36,7 +34,7 @@ public class ShiroConfig {
     //权限验证器
     @Bean("myRealm")
     public MyRealm myRealm(@Qualifier("credentialsMatcher") CredentialsMatcher credentialsMatcher) {
-        MyRealm myRealm = new MyRealm();
+            MyRealm myRealm = new MyRealm();
         //给权限验证器配置上自定义的密码验证器
         myRealm.setCredentialsMatcher(credentialsMatcher);
         return myRealm;
@@ -72,7 +70,6 @@ public class ShiroConfig {
     public CookieRememberMeManager rememberMeManager() {
         CookieRememberMeManager cookieRememberMeManager = new CookieRememberMeManager();
         cookieRememberMeManager.setCookie(rememberMeCookie());
-//        cookieRememberMeManager.setCipherKey(Base64.decode("fssgaegsfas=="));
         return  cookieRememberMeManager;
     }
 
@@ -94,7 +91,9 @@ public class ShiroConfig {
     @Bean("securityManager")
     public SecurityManager securityManager(@Qualifier("myRealm") MyRealm myRealm) {
         DefaultWebSecurityManager defaultWebSecurityManager = new DefaultWebSecurityManager();
+        //注入自定义myRealm
         defaultWebSecurityManager.setRealm(myRealm);
+        //注入自定义cacheManager
         defaultWebSecurityManager.setCacheManager(cacheManager());
         //注入记住我管理器
         defaultWebSecurityManager.setRememberMeManager(rememberMeManager());
@@ -135,7 +134,6 @@ public class ShiroConfig {
         //开启注册页面不需要权限
         linkedHashMap.put("/register", "anon");
         linkedHashMap.put("/saveregister", "anon");
-
         //验证phone唯一
         linkedHashMap.put("/solephone", "anon");
         //获取验证码

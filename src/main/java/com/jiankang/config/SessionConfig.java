@@ -1,4 +1,4 @@
-package com.bdqn.jiankang.config;
+package com.jiankang.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;

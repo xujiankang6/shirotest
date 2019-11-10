@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jiankang.mapper.AdminDao">
+
+    <!--教员申请map-->
+    <resultMap id="applrole" type="RoleApply">
+        <result property="uid" column="uid"></result>
+        <result property="applytime" column="applytime"></result>
+        <result property="applystatus" column="applystatus"></result>
+        <result property="applydescribe" column="applydescribe"></result>
+        <result column="uname" property="uname"></result>
+        <result column="phone" property="phone"></result>
+
+    </resultMap>
+
+
+    <!-- /**
+     * 教员根据条件查询课程
+     */
+    public List<Course> querySelectCourse(@Param("coursename") String coursename,
+                                          @Param("coursestatusid") int coursestatusid,
+                                          @Param("categoryid") int categoryid,
+                                          @Param("differentid") int differentid,
+                                          @Param("starttime") String starttime,
+                                          @Param("endtime") String endtime,
+                                          @Param("limit") int limit,
+                                          @Param("page") int page,
+                                         -->
+
+    <select id="querySelectCourse1" resultType="Course">
+        select c.*,differentname,categoryname,cs.statusname from
+        course c,coursestatus cs,course_different cd,categorycourse cg
+        <where>
+            <if test="coursename!=null and coursename!=''">
+                and c.coursename like '%${coursename}%'
+            </if>
+            <if test="categoryid!=0">
+                and c.categoryid=#{categoryid}
+            </if>
+            <if test="differentid!=0">
+                and c.differentid=#{differentid}
+            </if>
+            <if test="coursestatusid!=0">
+                and c.coursestatusid =#{coursestatusid}
+            </if>
+            <if test="endtime != null and endtime!=''">
+
+                and c.createtime <![CDATA[ <=]]> #{endtime}
+            </if>
+            <if test="starttime != null and starttime!=''">
+                and c.createtime >= #{starttime}
+            </if>
+            and c.differentid=cd.differentid
+            and c.coursestatusid=cs.coursestatusid
+            and c.categoryid=cg.categoryid
+
+        </where>
+
+        ORDER BY createtime DESC
+        limit #{page},#{limit}
+
+    </select>
+
+    <!--/**
+     * 教员根据条件查询课程数量
+     */
+    public int queryCourseCount(@Param("coursename") String coursename,
+                                          @Param("coursestatusid") int coursestatusid,
+                                          @Param("categoryid") int categoryid,
+                                          @Param("differentid") int differentid,
+                                          @Param("starttime") String starttime,
+                                          @Param("endtime") String endtime,
+                                          @Param("uid") int uid);-->
+    <select id="queryCourseCount1" resultType="Integer">
+        select count(1) from course
+        <where>
+            <if test="coursename!=null and coursename!=''">
+                and coursename like '%${coursename}%'
+            </if>
+            <if test="categoryid!=0">
+                and categoryid=#{categoryid}
+            </if>
+            <if test="differentid!=0">
+                and differentid=#{differentid}
+            </if>
+            <if test="coursestatusid!=0">
+                and coursestatusid =#{coursestatusid}
+            </if>
+            <if test="endtime != null and endtime!=''">
+                and createtime <![CDATA[ <=]]> #{endtime}
+            </if>
+            <if test="starttime != null and starttime!=''">
+                and createtime >= #{starttime}
+            </if>
+        </where>
+    </select>
+
+
+    <!--  /**
+     * 查询提交的教员申请
+     * @param limit
+     * @param page
+     * @return
+     */
+    public List<RoleApply> querySelectRoleApply(
+                                          @Param("limit") int limit,
+                                          @Param("page") int page);-->
+
+    <select id="querySelectRoleApply" resultMap="applrole">
+        select ra.*,ui.uname,ur.phone from role_apply ra,userinfo ui,`user` ur where ra.uid=ui.uid
+and ur.uid=ra.uid and ur.uid=ui.uid limit #{page},#{limit}
+
+    </select>
+
+    <!--  /**
+     * 查询提交的教员申请数量
+
+     * @return
+     */
+    public int queryRoleApplyCount();-->
+    <select id="queryRoleApplyCount" resultType="Integer">
+        select count(1) from role_apply
+    </select>
+
+
+    <!--
+    /**
+     * 删除申请教员的消息
+     */
+    public int delroleapply(@Param("uid") int uid);-->
+    <delete id="delroleapply">
+        DELETE from role_apply where uid=#{uid}
+    </delete>
+
+    <!-- /**
+     * 添加消息表记录
+     */
+    public int addmessage(@Param("message") Message message);-->
+    <insert id="addmessage">
+
+        insert into message(sendid,receiveid,sendtime,sendcontent,messagestatus)
+      values(#{message.sendid},#{message.receiveid},#{message.sendtime},
+      #{message.sendcontent},#{message.messagestatus})
+    </insert>
+
+    <!--    /**
+     * 根据uid修改u_r中该用户的权限
+     */
+    public int updateU_R(@Param("uid") int uid,@Param("rid") int rid);-->
+    <update id="updateU_R">
+        UPDATE u_r set rid=#{rid} where uid=#{uid}
+    </update>
+
+</mapper>

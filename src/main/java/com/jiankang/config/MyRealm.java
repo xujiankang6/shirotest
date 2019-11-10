@@ -1,9 +1,9 @@
-package com.bdqn.jiankang.config;
+package com.jiankang.config;
 
-import com.bdqn.jiankang.bean.Permission;
-import com.bdqn.jiankang.bean.Role;
-import com.bdqn.jiankang.bean.User;
-import com.bdqn.jiankang.service.UserService;
+import com.jiankang.bean.Permission;
+import com.jiankang.bean.Role;
+import com.jiankang.bean.User;
+import com.jiankang.service.UserService;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;

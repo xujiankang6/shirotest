@@ -1,4 +1,4 @@
-package com.bdqn.jiankang.config;
+package com.jiankang.config;
 
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.filter.authc.FormAuthenticationFilter;

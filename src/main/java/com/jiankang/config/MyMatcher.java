@@ -1,4 +1,4 @@
-package com.bdqn.jiankang.config;
+package com.jiankang.config;
 
 import ch.qos.logback.core.net.SyslogOutputStream;
 import org.apache.shiro.authc.AuthenticationInfo;
@@ -20,7 +20,7 @@ public class MyMatcher extends SimpleCredentialsMatcher {
 
 
     //将传进来的密码进行加密的方法
-    public String encrypt(String data){
+    private String encrypt(String data){
         String sha384Hex=new Sha384Hash(data).toBase64();
         return sha384Hex;
     }

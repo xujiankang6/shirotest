@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jiankang.mapper.UserDao">
+
+    <!--用户左导航的显示-->
+
+    <resultMap type="User" id="querybyname1">
+        <id property="uid" column="uid"/>
+        <result property="phone" column="phone"></result>
+        <result property="upwd" column="upwd"/>
+        <collection property="roles" ofType="Role">
+            <id property="rid" column="rid"></id>
+            <result column="rname" property="rname"></result>
+            <collection property="permissions" ofType="Permission">
+                <id property="pid" column="pid"></id>
+                <result column="pname" property="pname"></result>
+                <result column="permission_group_id" property="permission_group_id"></result>
+                <result column="permission_group_name" property="permission_group_name"></result>
+                <result column="href" property="href"></result>
+            </collection>
+        </collection>
+
+    </resultMap>
+    <!--收件箱的条目-->
+    <resultMap id="receivemessage" type="Message">
+        <id property="messageid" column="messageid"></id>
+        <result column="receiveid" property="receiveid"></result>
+        <result column="sendid" property="sendid"></result>
+        <result column="sendtime" property="sendtime"></result>
+        <result column="sendcontent" property="sendcontent"></result>
+        <result column="messagestatus" property="messagestatus"></result>
+        <result column="uname" property="sendname"></result>
+    </resultMap>
+
+
+    <!--根据ｐｈｏｎｅ查询ｕｓｅｒ信息-->
+    <select id="querybyname" resultMap="querybyname1">
+
+          select * from `user` u,u_r,role r,r_p,permission p,permission_group pg  WHERE
+u.uid=u_r.uid and u_r.rid=r.rid and r.rid=r_p.rid and r_p.pid=p.pid and pg.permission_group_id=p.permission_group_id and
+u.phone=#{phone}
+
+    </select>
+    <!--根据ｕｉｄ查询ｕｓｅｒｉｎｆｏ信息-->
+    <select id="queryuserinfo" resultType="UserInfo">
+
+        select * from userinfo where uid=#{uid}
+
+    </select>
+
+
+    <!-- /**
+     * 根据uid 修改图片路径
+     * @param uid
+     * @return
+     */
+    public int updateuserimg(@Param("uid")int uid, @Param("imgpath") String imgpath);
+-->
+    <update id="updateuserimg">
+        update userinfo set imgpath=#{imgpath} WHERE uid=#{uid}
+    </update>
+
+    <!--/**
+     * 根据uid修改userinfo
+     */
+    public int uppdateuserinfo(@Param("userInfo") UserInfo userInfo);-->
+    <update id="uppdateuserinfo" parameterType="UserInfo">
+
+        UPDATE userinfo
+        <trim prefix="set" suffixOverrides=",">
+            <if test="userInfo.uname!=null and userInfo.uname!=''">
+                uname=#{userInfo.uname},
+            </if>
+            <if test="userInfo.email!=null and userInfo.email!=''">
+                email=#{userInfo.email},
+            </if>
+            <if test="userInfo.nickname!=null and userInfo.nickname!=''">
+                nickname=#{userInfo.nickname},
+            </if>
+
+            <if test="userInfo.modifytime!=null and userInfo.modifytime!=''">
+                modifytime=#{userInfo.modifytime},
+            </if>
+            <if test="userInfo.introduce!=null and userInfo.introduce!=''">
+                introduce=#{userInfo.introduce},
+            </if>
+            <if test="userInfo.idcard!=null and userInfo.idcard!=''">
+                idcard=#{userInfo.idcard},
+            </if>
+        </trim>
+        where uid=#{userInfo.uid}
+    </update>
+
+    <!--/**
+     * 验证手机哈的唯一性
+     * select count(1) from `user` where phone='11e1'
+     */
+    public int solephone(@Param("phone") String phone);-->
+    <select id="solephone" resultType="Integer">
+        select count(1) from `user` where phone=#{phone}
+    </select>
+
+    <!-- /**
+         * 插入数据库新增的user信息
+         */
+        public int addUser(@Param("phone") String phone,@Param("upwd") String upwd);-->
+    <insert id="addUser">
+        insert into `USER`(phone,upwd) VALUES(#{phone},#{upwd})
+
+    </insert>
+
+    <!--/**
+     * 通过phone拿到uid，以便添加userinfo默认信息
+     */
+    public int getUidbyphone(@Param("phone") String phone);-->
+    <select id="getUidbyphone" resultType="Integer">
+        select uid from user where phone=#{phone}
+    </select>
+
+
+    <!--/**
+ * 根据uid添加userinfo默认信息
+ */
+public int adduserinfo(@Param("userInfo") UserInfo userInfo);-->
+    <insert id="adduserinfo" parameterType="UserInfo">
+        insert into userinfo(uname,uid,imgpath,email,nickname,introduce,idcard,createtime)
+        VALUES(#{userInfo.uname},#{userInfo.uid},#{userInfo.imgpath},#{userInfo.email}
+        ,#{userInfo.nickname},#{userInfo.introduce},#{userInfo.idcard},#{userInfo.createtime})
+    </insert>
+
+    <!-- /**
+     * 根据uid添加u_r表
+     */
+    public int addU_R(@Param("uid") int uid,@Param("rid") int rid);-->
+    <insert id="addU_R">
+        insert into u_r values(#{uid},#{rid});
+    </insert>
+    <!--/**
+     * 保存提交的申请教员理由
+     */
+    public int saveApply(@Param("roleApply") RoleApply roleApply);
+    -->
+    <insert id="saveApply">
+insert into role_apply(uid,applytime,applystatus,applydescribe)
+VALUES(#{roleApply.uid},#{roleApply.applytime},#{roleApply.applystatus},#{roleApply.applydescribe})
+
+    </insert>
+
+    <!--/**
+     * 根据uid查询申请教员表中是否有数据了
+     */
+    public int haveroleapplybyuid(@Param("uid") int uid);-->
+    <select id="haveroleapplybyuid" resultType="Integer">
+        SELECT count(1) from role_apply where uid=#{uid}
+    </select>
+
+
+
+    <!-- /**
+     * 查询提交的教员申请
+     * @param limit
+     * @param page
+     * @return
+     */
+    public List<Message> queryReceiveMessage(
+            @Param("receiveid") int receiveid,
+            @Param("limit") int limit,
+            @Param("page") int page);
+    -->
+
+    <select id="queryReceiveMessage" resultMap="receivemessage">
+        select m.*,u.uname from message m,userinfo u where m.sendid=u.uid and receiveid=#{receiveid}
+        order by sendtime desc
+         limit #{page},#{limit}
+
+    </select>
+    <!--/**
+     * 查询提交的教员申请数量
+
+     * @return
+     */
+    public int queryReceiveMessageCount( @Param("receiveid") int receiveid);-->
+    <select id="queryReceiveMessageCount" resultType="Integer">
+        select count(1) from message where receiveid=#{receiveid}
+    </select>
+
+
+    <!--    /**
+     *更加消息id查询该条内容
+     */
+    public Message querymessagebymid(
+            @Param("messageid") int messageid);-->
+    <select id="querymessagebymid" resultMap="receivemessage">
+        select m.*,u.uname from message m,userinfo u where m.sendid=u.uid and messageid=#{messageid}
+    </select>
+
+    <!--    /**
+     * 将消息改为已读
+     * @param messageid
+     * @return
+     */
+    public int updatemessagestatus(@Param("messageid") int messageid);-->
+    <update id="updatemessagestatus">
+        update message set messagestatus=1 where messageid=#{messageid}
+    </update>
+
+    <!--    /**
+     * 根据messageid删除消息
+     */
+    public int delmessagebyid(@Param("messageid") int messageid);-->
+    <delete id="delmessagebyid">
+        delete from message where messageid=#{messageid}
+    </delete>
+
+</mapper>
