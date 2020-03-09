@@ -17,6 +17,7 @@ public class CourseServiceImpl implements CourseService {
     @Autowired
     CourseDao cd;
 
+
     @Override
     public List<CategoryCourse> getCategorylist() {
         return cd.getCategorylist();

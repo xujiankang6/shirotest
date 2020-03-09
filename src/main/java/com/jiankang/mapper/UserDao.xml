@@ -102,6 +102,16 @@ u.phone=#{phone}
         select count(1) from `user` where phone=#{phone}
     </select>
 
+
+    <!--
+    /**
+     * 更新密码
+     */
+    public int updatePed(@Param("phone") String phone,@Param("upwd") String upwd);-->
+    <update id="updatePwd">
+        UPDATE user SET upwd=#{upwd} where phone=#{phone}
+    </update>
+
     <!-- /**
          * 插入数据库新增的user信息
          */

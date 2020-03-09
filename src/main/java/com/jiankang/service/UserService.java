@@ -45,6 +45,8 @@ public interface UserService {
     public int solephone(@Param("phone") String phone);
 
 
+
+
     /**
      * 插入数据库新增的user信息
      */
@@ -114,4 +116,12 @@ public interface UserService {
      * 根据messageid删除消息
      */
     public int delmessagebyid(@Param("messageid") int messageid);
+
+    /**
+     * 更新密码
+     * @param phone
+     * @param pwd
+     * @return
+     */
+    int updateUser(String phone, String pwd);
 }

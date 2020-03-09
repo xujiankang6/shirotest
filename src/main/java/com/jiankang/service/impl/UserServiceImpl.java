@@ -31,7 +31,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public int updateuserimg(int uid, String imgpath) {
-        return ud.updateuserimg(uid,imgpath);
+        return ud.updateuserimg(uid, imgpath);
     }
 
     @Override
@@ -43,6 +43,7 @@ public class UserServiceImpl implements UserService {
     public int solephone(String phone) {
         return ud.solephone(phone);
     }
+
 
     @Override
     public int addUser(String phone, String upwd) {
@@ -97,6 +98,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public int delmessagebyid(int messageid) {
         return ud.delmessagebyid(messageid);
+    }
+
+    @Override
+    public int updateUser(String phone, String pwd) {
+        return ud.updatePwd(phone, pwd);
     }
 
 

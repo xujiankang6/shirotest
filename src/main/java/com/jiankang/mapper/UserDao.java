@@ -42,6 +42,11 @@ public interface UserDao {
      */
     public int solephone(@Param("phone") String phone);
 
+
+    /**
+     * 更新密码
+     */
+    public int updatePwd(@Param("phone") String phone,@Param("upwd") String upwd);
     /**
      * 插入数据库新增的user信息
      */

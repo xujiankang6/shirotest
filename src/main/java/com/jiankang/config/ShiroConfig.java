@@ -134,6 +134,8 @@ public class ShiroConfig {
         //开启注册页面不需要权限
         linkedHashMap.put("/register", "anon");
         linkedHashMap.put("/saveregister", "anon");
+        linkedHashMap.put("/forgetpwd", "anon");//不需要验证
+        linkedHashMap.put("//notVerify/**", "anon");//不需要验证
         //验证phone唯一
         linkedHashMap.put("/solephone", "anon");
         //获取验证码
@@ -151,6 +153,7 @@ public class ShiroConfig {
         linkedHashMap.put("/bower_components/**", "anon");//不需要验证
         linkedHashMap.put("/plugins/**", "anon");//不需要验证
         linkedHashMap.put("/dist/**", "anon");//不需要验证
+
         linkedHashMap.put("/**", "user");//需要进行权限验证
         bean.setFilterChainDefinitionMap(linkedHashMap);
         return bean;

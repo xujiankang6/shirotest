@@ -2,11 +2,13 @@ package com.jiankang.controller;
 
 
 import com.jiankang.bean.*;
+import com.jiankang.exception.BusinessException;
+import com.jiankang.exception.LuoErrorCode;
+import com.jiankang.exception.TriggerOperationException;
 import com.jiankang.service.AdminService;
 import com.jiankang.service.CourseService;
 import com.jiankang.service.UserService;
 import com.jiankang.util.Layui;
-import com.jiankang.util.SmsService;
 import org.apache.ibatis.annotations.Param;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.IncorrectCredentialsException;
@@ -16,6 +18,8 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.crypto.hash.Sha384Hash;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.ClassUtils;
@@ -36,7 +40,10 @@ import java.util.*;
  */
 
 @Controller
+
 public class UserController {
+
+    Logger logger = LoggerFactory.getLogger(UserController.class);
 
 
     @Autowired
@@ -138,6 +145,17 @@ public class UserController {
         return "register";
     }
 
+
+
+    /**
+     * 到达忘记密码页面
+     */
+    @RequestMapping("/forgetpwd")
+    public String forgetPwd() {
+        return "forgetpwd";
+    }
+
+
     /**
      * 到达首页
      */
@@ -173,7 +191,8 @@ public class UserController {
         //成功返回0，失败返回1
         if (phone != null) {
             //把后台生成的code和所发送的手机号传进发送消息类，调用执行。
-            SmsService.send(phone, code);
+//            SmsService.send(phone, code);
+            logger.info("手机号：{}  验证码：  {}", phone, code);
             return 0;
         } else {
             return 1;
