@@ -19,6 +19,15 @@ public class Course implements Serializable {
     private String statusname;
     private String differentname;
     private String  categoryname;
+    private String nickname;
+
+    public String getNickname() {
+        return nickname;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
 
     public String getStatusname() {
         return statusname;
