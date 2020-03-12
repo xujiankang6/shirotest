@@ -56,4 +56,21 @@ public interface CourseCenterDao {
                                 @Param("endtime") String endtime,
                                 @Param("nickname") String nickname);
 
+    /**
+     * 检查是否已经加入学习
+     * @param courseid
+     * @param uid
+     * @return
+     */
+    public int checkIsAddCourse(@Param("courseid") int courseid,
+                                @Param("uid") int uid);
+
+    /**
+     * 检查是否已经加入课程
+     * @param courseid
+     * @param uid
+     * @return
+     */
+    public int AddCourseStudy(@Param("courseid") int courseid,
+                              @Param("uid") int uid);
 }

@@ -1,14 +1,20 @@
 package com.jiankang.controller;
 
+import cn.hutool.core.util.StrUtil;
 import com.jiankang.bean.*;
 import com.jiankang.service.CourseCenterService;
 import com.jiankang.service.CourseService;
 import com.jiankang.util.Layui;
+import com.sun.istack.NotNull;
 import org.apache.ibatis.annotations.Param;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.session.Session;
+import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -87,6 +93,17 @@ public class CourseCenterCtrl {
         return m;
     }
 
+
+    @RequestMapping("/mystudy")
+    public ModelAndView mycourse() {
+        ModelAndView m = new ModelAndView();
+        List<CategoryCourse> categorylists = cs.getCategorylist();
+        List<CourseDifferent> CourseDifferents = cs.getCourseDifferent();
+        List<Coursestatus> Coursestatuss = cs.getCoursestatus();
+        m.setViewName("mystudycourse/mycourse");
+        return m;
+    }
+
     /**
      * 返回上一页
      * @return
@@ -130,12 +147,21 @@ public class CourseCenterCtrl {
      * 到达播放页面
      */
     @RequestMapping(value ="/addstudy", method = RequestMethod.POST)
-    public int aasavechapteraa(String courseid) {
-        int i = 0;
+    @ResponseBody
+    public int aasavechapteraa(@NotNull String courseid) {
+        //session中拿到userid
+        Subject subject = SecurityUtils.getSubject();
+        Session session = subject.getSession();
+        UserInfo userInfo = (UserInfo) session.getAttribute("userinfo");
+        int userid = userInfo.getUid();
+        int i = courseCenterService.checkIsAddCourse(Integer.valueOf(courseid), userid);
 
-        logger.info("-     courseid             --"+courseid);
-
-        return i;
+        if(i>0){
+            return 0;
+        }else {
+            i=courseCenterService.AddCourseStudy(Integer.parseInt(courseid),userid);
+            return  i;
+        }
     }
 
 }

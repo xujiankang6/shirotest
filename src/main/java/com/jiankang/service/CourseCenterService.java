@@ -16,6 +16,7 @@ public interface CourseCenterService {
 
     /**
      * 查询所有的课程
+     *
      * @param coursename
      * @param coursestatusid
      * @param categoryid
@@ -37,9 +38,9 @@ public interface CourseCenterService {
                                           @Param("page") int page);
 
 
-
     /**
      * 根据条件查询教员课程数量
+     *
      * @param coursename
      * @param coursestatusid
      * @param categoryid
@@ -56,5 +57,21 @@ public interface CourseCenterService {
                                 @Param("endtime") String endtime,
                                 @Param("nickname") String nickname);
 
-    public int checkIsAddCourse()
-  }
+    /**
+     * 检查是否已经加入课程
+     * @param courseid
+     * @param uid
+     * @return
+     */
+    public int checkIsAddCourse(@Param("courseid") int courseid,
+                                @Param("uid") int uid);
+
+    /**
+     * 检查是否已经加入课程
+     * @param courseid
+     * @param uid
+     * @return
+     */
+    public int AddCourseStudy(@Param("courseid") int courseid,
+                                @Param("uid") int uid);
+}

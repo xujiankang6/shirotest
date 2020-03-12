@@ -88,6 +88,9 @@
             <if test="differentid!=0">
                 and differentid=#{differentid}
             </if>
+            <if test="coursestatusid!=0">
+                and c.coursestatusid =#{coursestatusid}
+            </if>
             <if test="endtime != null and endtime!=''">
                 and createtime <![CDATA[ <=]]> #{endtime}
             </if>
@@ -96,6 +99,31 @@
             </if>
         </where>
     </select>
+
+    <!--/**
+     * 检查是否已经加入学习
+     * @param courseid
+     * @param uid
+     * @return
+     */
+    public int checkIsAddCourse(@Param("courseid") int courseid,
+                                @Param("uid") int uid);-->
+    <select id="checkIsAddCourse" resultType="Integer">
+        SELECT count(1) from course_study where uid = #{uid} and  courseid = #{courseid}
+    </select>
+
+
+   <!-- /**
+    * 检查是否已经加入课程
+    * @param courseid
+    * @param uid
+    * @return
+    */
+    public int AddCourseStudy(@Param("courseid") int courseid,
+    @Param("uid") int uid);-->
+    <insert id="AddCourseStudy" >
+        insert into course_study(courseid,uid)  VALUES (#{courseid},#{uid})
+    </insert>
 
 
 

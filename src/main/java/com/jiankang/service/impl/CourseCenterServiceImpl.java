@@ -30,4 +30,14 @@ public class CourseCenterServiceImpl implements CourseCenterService {
     public int queryCourseCount(String coursename, int coursestatusid, int categoryid, int differentid, String starttime, String endtime,String nickname) {
         return courseCenterDao.queryCourseCount(coursename, coursestatusid, categoryid, differentid, starttime, endtime,nickname);
     }
+
+    @Override
+    public int checkIsAddCourse(int courseid, int uid) {
+        return courseCenterDao.checkIsAddCourse(courseid,uid);
+    }
+
+    @Override
+    public int AddCourseStudy(int courseid, int uid) {
+        return courseCenterDao.AddCourseStudy(courseid,uid);
+    }
 }
